@@ -1,15 +1,15 @@
 # Uncomment resources below and add required arguments.
 
-resource "aws_security_group" "" {
+resource "aws_security_group" "jose-security" {
   # 1. Define logical names (identifiers) for resource.
   #    E.g.: resource "type" "resource_logical_name" {}
   #    Docs: https://www.terraform.io/docs/providers/aws/r/security_group.html
 
   # 2. Set psysical name of your security group below in format "yourname-"
-  name = ""
+  name = "jose-security"
 
   description = "Test security group."
-  vpc_id = ""
+  vpc_id      = "vpc-77dc630d"
 }
 
 # To reference attributes of resources use syntax TYPE.NAME.ATTRIBUTE
@@ -19,48 +19,54 @@ resource "aws_security_group" "" {
 #
 # Reference: https://www.terraform.io/docs/configuration/interpolation.html
 
-/*
 resource "aws_security_group_rule" "ssh_ingress_access" {
   # 1. Add required arguments to open ingress(incoming) traffic to TCP port 22 - we'll use it later to ssh into instance.
   # 2. Add argument to reference Security Group resource.
   # Docs: https://www.terraform.io/docs/providers/aws/r/security_group_rule.html
-  
+
   # ...
- 
-  security_group_id = ""
-  cidr_blocks = [ "0.0.0.0/0" ] 
+
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.jose-security.id}"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_security_group_rule" "egress_access" {
   # 1. Add required arguments to open outgoing traffic to all ports (0-65535) 
   # 2. Add argument to reference Security Group resource.
   # Docs: https://www.terraform.io/docs/providers/aws/r/security_group_rule.html
-  
+
   # ...
-  
-  security_group_id = ""
-  cidr_blocks = [ "0.0.0.0/0" ]
+
+  type              = "egress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.jose-security.id}"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
-resource "aws_instance" "" {
+resource "aws_instance" "example" {
   # 1. Add resource name.
   # 2. Specify VPC subnet ID
   # 3. Specify EC2 instance type.
   # 4. Specify Security group for this instance (use one that we create above).
   # Docs: https://www.terraform.io/docs/providers/aws/r/instance.html
 
-  subnet_id = ""
+  subnet_id = "subnet-2bbad405"
 
-  instance_type = ""
-  vpc_security_group_ids = [ ]
-  associate_public_ip_address = false
-  # user_data = "${file("../shared/user-data.txt")}"
-  tags {
+  instance_type               = "t2.nano"
+  vpc_security_group_ids      = [ "${aws_security_group.jose-security.id}" ]
+  associate_public_ip_address = true
+  user_data = "${file("../shared/user-data.txt")}"
+  tags = {
     Name = "w1-myinstance"
   }
-  
+
   # Keep these arguments as is:
-  ami = "ami-cb2305a1"
+  ami               = "ami-cb2305a1"
   availability_zone = "us-east-1c"
 }
-*/
