@@ -9,8 +9,8 @@ resource "aws_security_group" "w3-security-group" {
     # Add here rule that allows incoming connections to
     # application running under docker via 80 port
 
-    from_port = 
-    to_port = 
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
